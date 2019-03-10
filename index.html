@@ -15,14 +15,19 @@
 <body>
 <script type="text/javascript" src="library/three.min.js"></script>
 <script type="text/javascript" src="library/dat.gui.js"></script>
+<script type="text/javascript" src="library/TrackballControls.js"></script>
 <script type="text/javascript" src="library/OrbitControl.js"></script>
 <script type="text/javascript" src="library/ParametricGeometries.js"></script>
 <script type="text/javascript" src="library/geometry.js"></script>
 <script>
     var gui = new dat.GUI();
     var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 50 );
-    camera.position.z = 30;
+//    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 50 );
+//        camera.position.z = 30;
+    var camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, -100, 100 );
+    camera.position.set( 5, 5, 5 );
+    scene.add(camera);
+    scene.add( new THREE.AxisHelper( 20 ) );
 
     var renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
@@ -34,9 +39,9 @@
     orbit.enableZoom = true;
 
     var lights = [];
-    lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
-    lights[ 1 ] = new THREE.PointLight( 0xffffff, 1, 0 );
-    lights[ 2 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+    lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0);
+    lights[ 1 ] = new THREE.PointLight( 0xffffff, 1);
+    lights[ 2 ] = new THREE.DirectionalLight( 0xffffff, 1);
 
     lights[ 0 ].position.set(    0,  200,    0 );
     lights[ 1 ].position.set(  100,  200,  100 );
@@ -50,20 +55,24 @@
 //    scene.add(root);
     var group = new THREE.Group();
     var lineMaterial = new THREE.LineBasicMaterial( { color: 0xffffff, transparent: true, opacity: 0.5 } );
-    var meshMaterial = new THREE.MeshPhongMaterial( { color: 0x156289, emissive: 0x072534, side: THREE.DoubleSide, flatShading: true } );
+    var meshMaterial = new THREE.MeshPhongMaterial( { color: 0x156289, emissive: 0x152345, side: THREE.DoubleSide, flatShading: true } );
 
     //    group.add( new THREE.LineSegments( geometry, lineMaterial ) );
     group.add( new THREE.Mesh( geometry, meshMaterial ) );
 
-    var geometry = new THREE.CylinderGeometry( 1, 1, 20, 32 );
+    var geometry = new THREE.CylinderGeometry( 1, 1, 33, 32 );
     var cylinder = new THREE.Mesh( geometry, meshMaterial );
+
     var data = {
-        segments: 24
+        segments: 24,
+        scale: 1.0,
+        color: "#156289"
     };
     group.children[0].geometry.dispose();
     group.children[0].geometry = geometry;
     group.position.set(0.0, 0.0, 0.0);
-
+    var z = new THREE.Vector3(0.0, 0.0, 1.0);
+    root.rotateOnAxis(z, Math.PI / 2.0);
     function generate_tubes() {
         for (var i = root.children.length - 1; i >= 0; i--) {
             root.remove(root.children[i]);
@@ -76,6 +85,8 @@
             var _z = R*Math.sin(alpha*i);
             var c = group.clone();
             c.position.set(_x, 0.0, _z);
+            c.scale.set(1.0, data.scale, 1.0);
+            c.children[0].material.color.set(data.color);
             root.add( c );
         }
         scene.add(root);
@@ -83,11 +94,14 @@
     generate_tubes();
     var folder = gui.addFolder('Number');
     folder.add( data, 'segments', 4, 48 ).step( 1 ).onChange( generate_tubes );
+    folder.add( data, 'scale',  0.1, 10.0 ).step( 0.1 ).onChange( generate_tubes );
+    folder.addColor(data, 'color').onChange(generate_tubes);
     var ang = 0.0;
     var render = function () {
         requestAnimationFrame( render );
 //        root.position.x = Math.sin(ang);
 //        root.matrixWorldNeedsUpdate = true;
+//        controls.update();
         renderer.render( scene, camera );
     };
 
