@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TUBE</title>
+    <style>
+        body {
+            margin:0;
+            font-size: 15px;
+            line-height: 18px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<script type="text/javascript" src="library/three.min.js"></script>
+<script type="text/javascript" src="library/dat.gui.js"></script>
+<script type="text/javascript" src="library/OrbitControl.js"></script>
+<script type="text/javascript" src="library/ParametricGeometries.js"></script>
+<script type="text/javascript" src="library/geometry.js"></script>
+<script>
+    var gui = new dat.GUI();
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 50 );
+    camera.position.z = 30;
+
+    var renderer = new THREE.WebGLRenderer( { antialias: true } );
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setClearColor( 0xffffff, 1 );
+    document.body.appendChild( renderer.domElement );
+
+    var orbit = new THREE.OrbitControls( camera, renderer.domElement );
+    orbit.enableZoom = true;
+
+    var lights = [];
+    lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+    lights[ 1 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+    lights[ 2 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+
+    lights[ 0 ].position.set(    0,  200,    0 );
+    lights[ 1 ].position.set(  100,  200,  100 );
+    lights[ 2 ].position.set( -100, -200, -100 );
+
+    scene.add( lights[ 0 ] );
+    scene.add( lights[ 1 ] );
+    scene.add( lights[ 2 ] );
+
+    var root = new THREE.Group();
+//    scene.add(root);
+    var group = new THREE.Group();
+    var lineMaterial = new THREE.LineBasicMaterial( { color: 0xffffff, transparent: true, opacity: 0.5 } );
+    var meshMaterial = new THREE.MeshPhongMaterial( { color: 0x156289, emissive: 0x072534, side: THREE.DoubleSide, flatShading: true } );
+
+    //    group.add( new THREE.LineSegments( geometry, lineMaterial ) );
+    group.add( new THREE.Mesh( geometry, meshMaterial ) );
+
+    var geometry = new THREE.CylinderGeometry( 1, 1, 20, 32 );
+    var cylinder = new THREE.Mesh( geometry, meshMaterial );
+    var data = {
+        segments: 24
+    };
+    group.children[0].geometry.dispose();
+    group.children[0].geometry = geometry;
+    group.position.set(0.0, 0.0, 0.0);
+
+    function generate_tubes() {
+        for (var i = root.children.length - 1; i >= 0; i--) {
+            root.remove(root.children[i]);
+        }
+        var N_COPY = data.segments;
+        var alpha = 2.0*Math.PI / N_COPY;
+        var R = 1.0 / Math.sin(alpha/2.0);
+        for( var i = 0; i<N_COPY; i++) {
+            var _x = R*Math.cos(alpha*i);
+            var _z = R*Math.sin(alpha*i);
+            var c = group.clone();
+            c.position.set(_x, 0.0, _z);
+            root.add( c );
+        }
+        scene.add(root);
+    }
+    generate_tubes();
+    var folder = gui.addFolder('Number');
+    folder.add( data, 'segments', 4, 48 ).step( 1 ).onChange( generate_tubes );
+    var ang = 0.0;
+    var render = function () {
+        requestAnimationFrame( render );
+//        root.position.x = Math.sin(ang);
+//        root.matrixWorldNeedsUpdate = true;
+        renderer.render( scene, camera );
+    };
+
+    window.addEventListener( 'resize', function () {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+    }, false );
+
+    render();
+
+</script>
+</body>
+</html>
