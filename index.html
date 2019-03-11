@@ -25,7 +25,7 @@
 //    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 50 );
 //        camera.position.z = 30;
     var camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, -100, 100 );
-    camera.position.set( 5, 5, 5 );
+    camera.position.set( 1, 1, 1 );
     scene.add(camera);
 //    scene.add( new THREE.AxisHelper( 20 ) );
 
@@ -39,23 +39,24 @@
     orbit.enableZoom = true;
 
     var lights = [];
-    lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0);
-    lights[ 1 ] = new THREE.PointLight( 0xffffff, 1);
-    lights[ 2 ] = new THREE.DirectionalLight( 0xffffff, 1);
+    lights[ 0 ] = new THREE.SpotLight( 0xffffff);
+//    lights[ 1 ] = new THREE.SpotLight( 0xffffff);
+//    lights[ 2 ] = new THREE.SpotLight( 0xffffff);
 
-    lights[ 0 ].position.set(    0,  100,    0 );
-    lights[ 1 ].position.set(  100,  100,  100 );
-    lights[ 2 ].position.set( -0, -100, -0 );
+    lights[ 0 ].position.set(  100, 100, 100);
+//    lights[ 1 ].position.set(  3000, 10000, 6000);
+//    lights[ 2 ].position.set(  3000, 10000, -6000);
 
     scene.add( lights[ 0 ] );
-    scene.add( lights[ 1 ] );
-    scene.add( lights[ 2 ] );
+//    scene.add( lights[ 1 ] );
+//    scene.add( lights[ 2 ] );
 
     var root = new THREE.Group();
 //    scene.add(root);
     var group = new THREE.Group();
     var lineMaterial = new THREE.LineBasicMaterial( { color: 0xffffff, transparent: true, opacity: 0.5 } );
-    var meshMaterial = new THREE.MeshPhongMaterial( { color: 0x156289, emissive: 0x152345, side: THREE.DoubleSide, flatShading: true } );
+    var meshMaterial = new THREE.MeshLambertMaterial ( { color: 0x156289, emissive: 0x356375, shiness: 60, specular: 0x156289,
+                                                        side: THREE.DoubleSide, flatShading: true } );
 
     //    group.add( new THREE.LineSegments( geometry, lineMaterial ) );
     group.add( new THREE.Mesh( geometry, meshMaterial ) );
@@ -87,6 +88,7 @@
             c.position.set(_x, 0.0, _z);
             c.scale.set(1.0, data.scale, 1.0);
             c.children[0].material.color.set(data.color);
+            c.children[0].material.emissive.set(data.color);
             root.add( c );
         }
         scene.add(root);
