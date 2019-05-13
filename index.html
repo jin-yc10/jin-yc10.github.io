@@ -65,17 +65,23 @@
     var cylinder = new THREE.Mesh( geometry, meshMaterial );
 
     var data = {
+        id: 0,
         segments: 24,
         scale: 1.0,
         color: "#156289"
     };
+
+    var default_color = "#156289";
+
     group.children[0].geometry.dispose();
     group.children[0].geometry = geometry;
     group.position.set(0.0, 0.0, 0.0);
     var z = new THREE.Vector3(0.0, 0.0, 1.0);
     root.rotateOnAxis(z, Math.PI / 2.0);
     function generate_tubes() {
+        var old_colors = [];
         for (var i = root.children.length - 1; i >= 0; i--) {
+            old_colors.push('#'+root.children[i].children[0].material.color.getHexString());
             root.remove(root.children[i]);
         }
         var N_COPY = data.segments;
@@ -87,17 +93,39 @@
             var c = group.clone();
             c.position.set(_x, 0.0, _z);
             c.scale.set(1.0, data.scale, 1.0);
-            c.children[0].material.color.set(data.color);
-            c.children[0].material.emissive.set(data.color);
+            c.children[0].material = group.children[0].material.clone();
+            if(i<old_colors.length) {
+                c.children[0].material.color.set(old_colors[i]);
+                c.children[0].material.emissive.set(old_colors[i]);
+            } else {
+                c.children[0].material.color.set(default_color);
+                c.children[0].material.emissive.set(default_color);
+            }
             root.add( c );
         }
         scene.add(root);
+        if(folder) {
+            folder.__controllers[0].__max = data.segments - 1;
+        }
     }
+
+    function select_idx() {
+        console.log(data.id);
+        console.log(root.children[data.id].children[0].material.uuid);
+        data.color = '#' + root.children[data.id].children[0].material.color.getHexString();
+    }
+
+    function change_color() {
+        root.children[data.id].children[0].material.color.set(data.color);
+        root.children[data.id].children[0].material.emissive.set(data.color);
+    }
+
     generate_tubes();
     var folder = gui.addFolder('Number');
+    folder.add( data, 'id', 0, 3).step( 1 ).onChange(select_idx);
     folder.add( data, 'segments', 4, 48 ).step( 1 ).onChange( generate_tubes );
     folder.add( data, 'scale',  0.1, 10.0 ).step( 0.1 ).onChange( generate_tubes );
-    folder.addColor(data, 'color').onChange(generate_tubes);
+    folder.addColor(data, 'color').onChange(change_color);
     var ang = 0.0;
     var render = function () {
         requestAnimationFrame( render );
