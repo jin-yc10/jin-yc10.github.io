@@ -55,7 +55,7 @@
 //    scene.add(root);
     var group = new THREE.Group();
     var lineMaterial = new THREE.LineBasicMaterial( { color: 0xffffff, transparent: true, opacity: 0.5 } );
-    var meshMaterial = new THREE.MeshLambertMaterial ( { color: 0x156289, emissive: 0x356375, shiness: 60, specular: 0x156289,
+    var meshMaterial = new THREE.MeshLambertMaterial ( { color: 0x666666, emissive: 0x666666, shiness: 60, specular: 0x666666,
                                                         side: THREE.DoubleSide, flatShading: true } );
 
     //    group.add( new THREE.LineSegments( geometry, lineMaterial ) );
@@ -68,10 +68,10 @@
         id: 0,
         segments: 24,
         scale: 1.0,
-        color: "#156289"
+        color: "#666666"
     };
 
-    var default_color = "#156289";
+    var default_color = "#666666";
 
     group.children[0].geometry.dispose();
     group.children[0].geometry = geometry;
