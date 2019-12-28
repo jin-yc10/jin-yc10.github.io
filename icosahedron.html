@@ -26,8 +26,8 @@
 //    var gui = new dat.GUI();
     var scene = new THREE.Scene();
     var scale = 10;
-    var camera = new THREE.PerspectiveCamera( 120, window.innerWidth / window.innerHeight, 0.1, 1000 );
-//    var camera = new THREE.OrthographicCamera( window.innerWidth / - scale, window.innerWidth / scale, window.innerHeight / scale, window.innerHeight / - scale, -1000, 1000 );
+//    var camera = new THREE.PerspectiveCamera( 120, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    var camera = new THREE.OrthographicCamera( window.innerWidth / - scale, window.innerWidth / scale, window.innerHeight / scale, window.innerHeight / - scale, -1000, 1000 );
     camera.position.set( 0, 0, 200.0 );
     scene.add(camera);
 
