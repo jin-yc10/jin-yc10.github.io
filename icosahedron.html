@@ -9,7 +9,7 @@
             font-size: 15px;
             line-height: 18px;
             overflow: hidden;
-            color: #7897c2;
+            color: #8E8E8E;
         }
     </style>
 </head>
@@ -25,7 +25,7 @@
 <script>
 //    var gui = new dat.GUI();
     var scene = new THREE.Scene();
-    var scale = 5;
+    var scale = 10;
 //    var camera = new THREE.PerspectiveCamera( 120, window.innerWidth / window.innerHeight, 0.1, 1000 );
     var camera = new THREE.OrthographicCamera( window.innerWidth / - scale, window.innerWidth / scale, window.innerHeight / scale, window.innerHeight / - scale, -1000, 1000 );
     camera.position.set( 0, 0, 200.0 );
@@ -49,9 +49,9 @@
     var root = new THREE.Group();
 
     var group = new THREE.Group();
-    var lineMaterial = new THREE.LineBasicMaterial( { color: 0x111111, linewidth: 100} );
-//    var meshMaterial = new THREE.MeshPhongMaterial ( { color: 0xff0000, emissive: 0xff0000, specular: 10} );
-    var meshMaterial = new THREE.MeshLambertMaterial ( { color: 0x8e8e8e, emissive: 0x8e8e8e, specular: 0.01} );
+    var lineMaterial = new THREE.LineBasicMaterial( { color: 0x111111, linewidth: 30} );
+    var meshMaterial = new THREE.MeshLambertMaterial ( { color: 0x8E8E8E, emissive: 0x4E4E4E, specular: 10} );
+
     //    group.add( new THREE.LineSegments( geometry, lineMaterial ) );
     group.add( new THREE.Mesh( geometry, meshMaterial ) );
 
